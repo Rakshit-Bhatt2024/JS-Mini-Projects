@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
+    <title>QR Code Generator</title>
+    <meta name="description" content="Generate QR codes from text or URLs with this responsive QR code generator">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>QR Code Generator</h1>
+    <p>Enter your text or URL</p>
+    <input type="text" placeholder="Text or URL" id="qrText" aria-label="Enter text or URL to generate QR code">
+
+    <div id="imgBox" aria-live="polite">
+        <img src="" id="qrImage" alt="Generated QR Code" style="display: none;">
+    </div>
+
+    <button onclick="generateQR()" aria-describedby="qrText">Generate QR Code</button>
+</div>
+
+<script>
+let imgBox = document.getElementById("imgBox");
+let qrImage = document.getElementById("qrImage");
+let qrText = document.getElementById("qrText");
+
+// Add Enter key support
+qrText.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        generateQR();
+    }
+});
+
+function generateQR(){
+    const inputValue = qrText.value.trim();
+    
+    if(inputValue.length > 0){
+        // Show loading state
+        qrImage.style.display = 'none';
+        imgBox.classList.remove("show-img");
+        
+        // Generate QR code with better error handling
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(inputValue)}`;
+        
+        qrImage.onload = function() {
+            qrImage.style.display = 'block';
+            imgBox.classList.add("show-img");
+        };
+        
+        qrImage.onerror = function() {
+            alert('Error generating QR code. Please try again.');
+        };
+        
+    } else {
+        qrText.classList.add('error');
+        qrText.focus();
+        setTimeout(() => {
+            qrText.classList.remove('error');
+        }, 1000);
+    }
+}
+</script>
+
+</body>
+</html>
